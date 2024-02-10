@@ -7,22 +7,14 @@
 # RUN rm -rf photogenic photogenic.zip
 # CMD ["/usr/sbin/httpd", "-D", "FOREGROUND"]
 # EXPOSE 80 22
-FROM centos:8
 
-RUN groupadd apache && \
-    useradd -g apache -r -s /sbin/nologin apache
+FROM centos:latest
 
-RUN rpm -Uvh https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
+# Install Apache HTTP Server
+RUN yum install -y httpd
 
-RUN dnf update -y && \
-    dnf install -y epel-release httpd php php-mysql zip unzip tar -q --setopt=tsflags=nodocs && \
-    dnf clean all -y
+# Expose port 80 for HTTP traffic
+EXPOSE 80
 
-ADD https://www.free-css.com/assets/files/free-css-templates/download/page254/photogenic.zip /var/www/html/
-WORKDIR /var/www/html/
-RUN unzip photogenic.zip
-RUN cp -rvf photogenic/* .
-RUN rm -rf photogenic photogenic.zip
-
-CMD ["/usr/sbin/httpd", "-D", "FOREGROUND"]
-EXPOSE 80 22
+# Start Apache HTTP Server in the foreground when the container starts
+CMD ["httpd", "-D", "FOREGROUND"]
