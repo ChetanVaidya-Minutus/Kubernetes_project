@@ -8,27 +8,17 @@
 # CMD ["/usr/sbin/httpd", "-D", "FOREGROUND"]
 # EXPOSE 80 22
 
-FROM centos
-
-RUN cd /etc/yum.repos.d/
-RUN sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-*
-RUN sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
-
-# Install Apache HTTP Server
-RUN yum install -y httpd zip unzip
-
-ADD https://www.free-css.com/assets/files/free-css-templates/download/page295/antique-cafe.zip /var/www/html/
-
-WORKDIR /var/www/html/
-
+FROM ubuntu:22.04
+ 
+# Install apache2, zip, and curl
+RUN apt-get -y update
+RUN apt-get install -y apache2
+RUN apt-get install -y zip unzip wget
+RUN wget https://www.free-css.com/assets/files/free-css-templates/download/page295/antique-cafe.zip
 RUN unzip antique-cafe.zip
-
-RUN cp -rvf antique-cafe/* .
-
-RUN rm -rf antique-cafe antique-cafe.zip
-
-# Start Apache HTTP Server in the foreground when the container starts
-CMD ["httpd", "-D", "FOREGROUND"]
-
-# Expose port 80 for HTTP traffic
-EXPOSE 80 22
+RUN mv /2126_antique_cafe/* /var/www/html
+RUN rm -rf 2126_antique_cafe antique-cafe.zip
+ 
+# Start Apache in the foreground
+CMD ["apache2ctl", "-D", "FOREGROUND"]
+EXPOSE 80
