@@ -1,55 +1,11 @@
-# - hosts: all
-#   become: true
-#   tasks: 
-#     #  - name: delete old deployment
-#     #    command: kubectl delete -f /home/ubuntu/Deployment.yml
-#     #  - name: delete old service
-#     #    command: kubectl delete -f /home/ubuntu/Service.yml
-#      - name: create new deployment
-#        command: kubectl apply -f /home/ubuntu/Deployment.yml
-#      - name: create new service
-#        command: kubectl apply -f /home/ubuntu/Service.yml
-
-
----
-- name: Deploy Docker image to Kubernetes
-  hosts: localhost
-  tasks:
-    - name: Create Deployment
-      k8s:
-        state: present
-        definition:
-          apiVersion: apps/v1
-          kind: Deployment
-          metadata:
-            name: my-app
-          spec:
-            replicas: 3
-            selector:
-              matchLabels:
-                app: my-app
-            template:
-              metadata:
-                labels:
-                  app: my-app
-              spec:
-                containers:
-                  - name: my-app
-                    image: chetanvaidyaminutus/demo_pipeline:latest
-                    ports:
-                      - containerPort: 80
-    - name: Create Service
-      k8s:
-        state: present
-        definition:
-          apiVersion: v1
-          kind: Service
-          metadata:
-            name: my-app
-          spec:
-            selector:
-              app: my-app
-            ports:
-              - protocol: TCP
-                port: 80
-                targetPort: 80
+- hosts: all
+  become: true
+  tasks: 
+    #  - name: delete old deployment
+    #    command: kubectl delete -f /home/ubuntu/Deployment.yml
+    #  - name: delete old service
+    #    command: kubectl delete -f /home/ubuntu/Service.yml
+     - name: create new deployment
+       command: kubectl apply -f /home/ubuntu/Deployment.yml
+     - name: create new service
+       command: kubectl apply -f /home/ubuntu/Service.yml
